@@ -3,6 +3,9 @@ precision highp float;
 
 uniform vec2 iResolution;
 uniform float iTime;
+uniform vec3 uColor1;
+uniform vec3 uColor2;
+uniform float uColorSplit;
 out vec4 fragColor;
 
 vec3 hsv2rgb(vec3 c){
@@ -169,11 +172,11 @@ void main(){
     float zz=((value+1.)*.5);
     value = fract(zz / .05);
 
-    vec3 c1 = hsv2rgb(vec3(.064,mix(.66, .7, value),mix(.97, 1., 1.-value)));
+    vec3 c1 = hsv2rgb(vec3(uColor1.x,mix(uColor1.y - .02, uColor1.y + .02, value),mix(uColor1.z - .02, uColor1.z + .02, 1.-value)));
 
-    vec3 c2 = hsv2rgb(vec3(.088888,mix(.28, .32, value),mix(.96, 1., 1.-value)));
+    vec3 c2 = hsv2rgb(vec3(uColor2.x,mix(uColor2.y - .02, uColor2.y + .02, value),mix(uColor2.z - .02, uColor2.z + .02, 1.-value)));
 
-    vec4 color=vec4((zz > 0.55) ? c1 : c2,1.);
+    vec4 color=vec4((zz > uColorSplit) ? c1 : c2,1.);
 
     float variance=.8;
     
@@ -183,7 +186,7 @@ void main(){
     float noise=fract(sin(grainSeed)*43758.5453+iTime);
     noise=gaussian(noise,0.,variance*variance);
     
-    float w=.2;
+    float w=.1;
     
     vec3 grain=vec3(noise)*(1.-color.rgb);
     
